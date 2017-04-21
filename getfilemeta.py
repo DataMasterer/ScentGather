@@ -1,9 +1,18 @@
 import hashlib
 import sys
 import os
+import platform
 from logging import log
 from file_metadata.generic_file import GenericFile
 
+sysid=None
+
+def getsysinfo():
+	sysinfo=[None,platform.architecture(),platform.machine(),
+	platform.node(),platform.platform(),platform.processor(),
+	platform.system()]
+	return sysinfo
+	
 def hashfile(path, blocksize = 65536):
 #src: http://pythoncentral.io/finding-duplicate-files-with-python/
     afile = open(path, 'rb')
@@ -50,8 +59,19 @@ def traversedir(parentFolder,depth):
 				filelist.append({'pathname':pathname,'filename':file})
 	return filelist
 
-def getallfinfo(filepath):
+def getallfinfo(targetfile):
+	global sysinfo
+	pathname=targetfile['pathname']
+	filename=targetfile['filename']
+	fileext=os.path.splitext(pathname)
+	filehash=hashfile(pathname)
 	log('getallfinfo started')
-	gf=GenericFile.create(filepath)
+	gf=GenericFile.create(pathname)
 	analysis=gf.analyze()
-	log(filepath,dump=analysis)
+	fstat=os.stat(pathname)
+	insts='2017-04-21 14:07:00'
+	fileinfo=[None,filename,pathname,fstat.st_ino,sysinfo,
+	fstat.st_mtime,fstat.st_atime,fstat.st_ctime,None,insts,
+	fstat.st_size,None,fileext,filehash,analysis]
+	log(filepath,dump=fileinfo)
+	log('getallfinfo done')

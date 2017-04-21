@@ -31,7 +31,7 @@ files=traversedir(pathname,d)
 
 fileinfos=[]
 for f in files:
-	fileinfos.append(getallfinfo(f['filename']))
+	fileinfos.append(getallfinfo(f))
 	if False and len(fileinfos)>=limit and limit!=0 and dbconnect is not None:
 		success=saveinfotodb(dbconnect,fileinfos)
 		if success:
