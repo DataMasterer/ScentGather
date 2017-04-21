@@ -48,6 +48,10 @@ def saveinfotodb(dbconnect,fileinfos):
 		for f in fileinfos:
 			c.execute('''
 			INSERT INTO files
+			(fileID,filename,pathname,inode,systemID,
+			lastmodDate,lastaccessDate,apparentcreationDate,
+			discovereddeletionDate,insertiondate,sizeInBytes,
+			detectedformatID,ext,md5sum)
 			VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
 			''',f[:-1])
 			if c.lastrowid:
@@ -55,10 +59,12 @@ def saveinfotodb(dbconnect,fileinfos):
 				for k,v in list(f[-1]):
 					c.execute('''
 					INSERT OR IGNORE INTO exif 
+					(exifID,exifName)
 					VALUES (?,?)
 					''',(None,k))
 					c.execute('''
 					INSERT OR IGNORE INTO files_exif 
+					(fileID,exifID,value)
 					VALUES (?,(select exifID from exif where exifname=?),?)
 					''',(fid,k,v))
 			else:
