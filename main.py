@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import argparse
 from connecttodb import *
-from traverser import *
+from getfilemeta import *
 from logging import *
 
 parser = argparse.ArgumentParser(description='Collect File(s) Metadata')
