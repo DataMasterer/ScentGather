@@ -46,5 +46,5 @@ def traversedir(parentFolder,depth):
 			for file in files:
 				pathname = os.path.join(root, file)
 				filelist.append({pathname:file})
-		if len(path)==depth: dirs[:]=[];
+		if len(path)-1==depth: dirs[:]=[];
 	return filelist
