@@ -2,6 +2,7 @@ import hashlib
 import sys
 import os
 from logging import log
+from file_metadata.generic_file import GenericFile
 
 def hashfile(path, blocksize = 65536):
 #src: http://pythoncentral.io/finding-duplicate-files-with-python/
@@ -46,5 +47,11 @@ def traversedir(parentFolder,depth):
 		else: 
 			for file in files:
 				pathname = os.path.join(root, file)
-				filelist.append({pathname:file})
+				filelist.append({'pathname':pathname,'filename':file})
 	return filelist
+
+def getallfinfo(filepath):
+	log('getallfinfo started')
+	gf=GenericFile.create(filepath)
+	analysis=gf.analyze()
+	log(filepath,dump=analysis)
