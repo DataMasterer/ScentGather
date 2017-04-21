@@ -3,7 +3,10 @@ import time
 import os.path
 import shutil
 
+logfilename='logfile.log'
+
 def log(msg,errmsg=None,dump=None,listelem=None,elemparent=None,pathname=None,depth=None):
+	global logfilename
 	ts=time.time()
 	logstring=[]
 	logstring=logstring+[datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')]
@@ -14,7 +17,13 @@ def log(msg,errmsg=None,dump=None,listelem=None,elemparent=None,pathname=None,de
 		logstring=logstring+[None]
 	logstring=logstring+[pathname,depth,dump]
 	print logstring
-	#if os.path.exists('logfile.log'):
-		#shutil.copy('logfile.log','logfile.log.'+datetime.datetime.fromtimestamp(ts).strftime('%Y%m%d%H%M%S'))
-	with open('logfile.log','a') as f:
+	with open(logfilename,'a') as f:
 		f.write('\t'.join(map(str,logstring))+'\n')
+
+def archivelog():
+	global logfilename
+	ts=time.time()
+	if os.path.exists(logfilename):
+		shutil.copy(logfilename,logfilename+'.'+datetime.datetime.fromtimestamp(ts).strftime('%Y%m%d%H%M%S'))
+	with open(logfilename,'w') as f:
+		f.write('')
