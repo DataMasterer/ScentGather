@@ -9,16 +9,17 @@ def connectodb(hostname,schema,username,password,dbtype):
 def saveinfotodb(dbconnect,fileinfos):
 	if dbconnect is sqlite3.Connection:
 		c=dbconnect.cursor()
+		c.execute("PRAGMA foreign_keys=1")
 		c.executescript('''
 		CREATE TABLE IF NOT EXISTS exif
 		(
-			exifID INT PRIMARY KEY,
+			exifID INTEGER PRIMARY KEY,
 			exifname text UNIQUE NOT NULL
 		);
 
 		CREATE TABLE IF NOT EXISTS files
 		(
-			fileID INT PRIMARY KEY,
+			fileID INTEGER PRIMARY KEY,
 			filename text NOT NULL,
 			pathname text UNIQUE NOT NULL,
 			inode INT,
@@ -36,8 +37,8 @@ def saveinfotodb(dbconnect,fileinfos):
 
 		CREATE TABLE IF NOT EXISTS files_exif
 		(
-			fileID INT,
-			exifID INT,
+			fileID INTEGER NOT NULL,
+			exifID INTEGER NOT NULL,
 			value text,
 			PRIMARY KEY (exifID,fileID),
 			FOREIGN KEY (fileID) REFERENCES files(fileID),
