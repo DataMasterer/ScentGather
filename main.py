@@ -5,8 +5,8 @@ from getfilemeta import *
 from logging import *
 
 parser = argparse.ArgumentParser(description='Collect File(s) Metadata')
-parser.add_argument('-d',default=0,help='depth [0]')
-parser.add_argument('-l',default=0,help='array in memory limit [0]')
+parser.add_argument('-d',default=0,help='depth [0]',type=int)
+parser.add_argument('-l',default=0,help='array in memory limit [0]',type=int)
 parser.add_argument('-H',default='localhost',help='db hostname [localhost]')
 parser.add_argument('-s',default='datamaster',help='db schema [datamaster]')
 parser.add_argument('-u',default='root',help='db username [root]')
@@ -28,15 +28,16 @@ if dbconnect is None:
 	log('Failed to connect, logging only')
 
 files=traversedir(pathname,d)
+sysid=getsysid(dbconnect)
 
 fileinfos=[]
 for f in files:
-	fileinfos.append(getallfinfo(f))
-	if False and len(fileinfos)>=limit and limit!=0 and dbconnect is not None:
+	fileinfos.append(getallfinfo(f,sysid))
+	if len(fileinfos)>=l and l!=0 and dbconnect is not None:
 		success=saveinfotodb(dbconnect,fileinfos)
-		if success:
+		if success is True:
 			fileinfos=[]
 		else:
 			log('Failed to saveinfotodb',success,fileinfos,f,files,pathname,d)
 			fileinfos=[]
-	log('Info',True,fileinfos,f,files,pathname,d)
+	#log('Info',True,fileinfos,f,files,pathname,d)

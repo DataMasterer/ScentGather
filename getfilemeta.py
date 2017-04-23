@@ -2,13 +2,13 @@ import hashlib
 import sys
 import os
 import platform
+import datetime
+import time
 from logging import log
 from file_metadata.generic_file import GenericFile
 
-sysid=None
-
 def getsysinfo():
-	sysinfo=[None,platform.architecture(),platform.machine(),
+	sysinfo=[str(platform.architecture()),platform.machine(),
 	platform.node(),platform.platform(),platform.processor(),
 	platform.system()]
 	return sysinfo
@@ -59,19 +59,20 @@ def traversedir(parentFolder,depth):
 				filelist.append({'pathname':pathname,'filename':file})
 	return filelist
 
-def getallfinfo(targetfile):
-	global sysinfo
+def getallfinfo(targetfile,sysid):
 	pathname=targetfile['pathname']
 	filename=targetfile['filename']
-	fileext=os.path.splitext(pathname)
+	fileext=''.join(os.path.splitext(pathname)[1:])
 	filehash=hashfile(pathname)
 	log('getallfinfo started')
 	gf=GenericFile.create(pathname)
 	analysis=gf.analyze()
 	fstat=os.stat(pathname)
-	insts='2017-04-21 14:07:00'
-	fileinfo=[None,filename,pathname,fstat.st_ino,sysinfo,
+	ts=time.time()
+	insts=datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+	fileinfo=[filename,pathname,fstat.st_ino,sysid,
 	fstat.st_mtime,fstat.st_atime,fstat.st_ctime,None,insts,
 	fstat.st_size,None,fileext,filehash,analysis]
-	log(filepath,dump=fileinfo)
+	log(pathname,dump=fileinfo)
 	log('getallfinfo done')
+	return fileinfo

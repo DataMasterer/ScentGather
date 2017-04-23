@@ -1,4 +1,6 @@
-from getfilemeta import sysid
+from getfilemeta import *
+from logging import *
+import sys
 
 def connectodb(hostname='localhost',schema='datamaster',username='root',password='',dbtype='sqlite'):
 	if dbtype=='sqlite':
@@ -58,57 +60,64 @@ def connectodb(hostname='localhost',schema='datamaster',username='root',password
 		return None
 
 def savesysinfotodb(dbconnect,sysinfo):
-	global sysid
-	if dbconnect is sqlite3.Connection:
+	import sqlite3
+	if type(dbconnect) is sqlite3.Connection:
 		c=dbconnect.cursor()
 		res=c.execute('''
-		SELECT systemID FROM platform
+		SELECT systemID FROM platforms
 		WHERE platform=?
-		''',sysinfo[4])
-		sysid=res.fetchAll()
-		if sysid is None:
+		''',[sysinfo[3]])
+		sysid=res.fetchall()
+		if sysid is None or type(sysid) is not int and len(sysid)==0:
 			c.execute('''
-			INSERT INTO platform
-			(systemID,architecture,machine,node,platform,
+			INSERT INTO platforms
+			(architecture,machine,node,platform,
 			processor,system)
-			VALUES (?,?,?,?,?,?,?)
+			VALUES (?,?,?,?,?,?)
 			''',sysinfo)
 			sysid=c.lastrowid
 			dbconnect.commit()
-		if sysid is None:
+		if type(sysid) is not int and len(sysid)==0:
 			return False
+		elif type(sysid) is not int:
+			sysid=sysid[0][0]
 	else:
 		return False
-	return True
+	return sysid
+
+def getsysid(dbconnect):
+	return savesysinfotodb(dbconnect,getsysinfo())
 
 def saveinfotodb(dbconnect,fileinfos):
-	global sysid
-	if dbconnect is sqlite3.Connection:
+	import sqlite3
+	if type(dbconnect) is sqlite3.Connection:
 		c=dbconnect.cursor()
 		for f in fileinfos:
 			c.execute('''
-			INSERT INTO files
-			(fileID,filename,pathname,inode,systemID,
+			INSERT OR IGNORE INTO files
+			(filename,pathname,inode,systemID,
 			lastmodDate,lastaccessDate,apparentcreationDate,
 			discovereddeletionDate,insertiondate,sizeInBytes,
 			detectedformatID,ext,md5sum)
-			VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+			VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
 			''',f[:-1])
-			if c.lastrowid:
+			if type(c.lastrowid) is int:
 				fid=c.lastrowid
-				for k,v in list(f[-1]):
+				for k,v in list(f[-1].items()):
 					c.execute('''
 					INSERT OR IGNORE INTO exif 
 					(exifName)
 					VALUES (?)
-					''',(k))
+					''',[k])
 					c.execute('''
 					INSERT OR IGNORE INTO files_exif 
 					(fileID,exifID,value)
 					VALUES (?,(select exifID from exif where exifname=?),?)
-					''',(fid,k,v))
+					''',[fid,k,v])
 			else:
 				dbconnect.rollback()
 				return False
 		dbconnect.commit()
 		return True
+	else:
+		return False
