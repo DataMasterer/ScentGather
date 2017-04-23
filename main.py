@@ -1,8 +1,8 @@
 #!/usr/bin/python
 import argparse
-from connecttodb import *
-from getfilemeta import *
-from logging import *
+import datamaster_connecttodb
+import datamaster_getfilemeta
+import datamaster_logging
 
 parser = argparse.ArgumentParser(description='Collect File(s) Metadata')
 parser.add_argument('-d',default=0,help='depth [0]',type=int)
@@ -23,21 +23,21 @@ p=args.p
 t=args.t
 pathname=args.pathname
 
-dbconnect=connectodb(H,s,u,p,t)
+dbconnect=datamaster_connecttodb.connectodb(H,s,u,p,t)
 if dbconnect is None:
-	log('Failed to connect, logging only')
+	datamaster_logging.log('Failed to connect, logging only')
 
-files=traversedir(pathname,d)
-sysid=getsysid(dbconnect)
+files=datamaster_getfilemeta.traversedir(pathname,d)
+sysid=datamaster_connecttodb.getsysid(dbconnect)
 
 fileinfos=[]
 for f in files:
-	fileinfos.append(getallfinfo(f,sysid))
+	fileinfos.append(datamaster_getfilemeta.getallfinfo(f,sysid))
 	if len(fileinfos)>=l and l!=0 and dbconnect is not None:
-		success=saveinfotodb(dbconnect,fileinfos)
+		success=datamaster_connecttodb.saveinfotodb(dbconnect,fileinfos)
 		if success is True:
 			fileinfos=[]
 		else:
-			log('Failed to saveinfotodb',success,fileinfos,f,files,pathname,d)
+			datamaster_logging.log('Failed to saveinfotodb',success,fileinfos,f,files,pathname,d)
 			fileinfos=[]
-	#log('Info',True,fileinfos,f,files,pathname,d)
+	datamaster_logging.log('Info',True,fileinfos,f,files,pathname,d)

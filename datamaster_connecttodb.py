@@ -1,5 +1,5 @@
-from getfilemeta import *
-from logging import *
+import datamaster_getfilemeta
+import datamaster_logging
 import sys
 
 def connectodb(hostname='localhost',schema='datamaster',username='root',password='',dbtype='sqlite'):
@@ -86,7 +86,7 @@ def savesysinfotodb(dbconnect,sysinfo):
 	return sysid
 
 def getsysid(dbconnect):
-	return savesysinfotodb(dbconnect,getsysinfo())
+	return savesysinfotodb(dbconnect,datamaster_getfilemeta.getsysinfo())
 
 def saveinfotodb(dbconnect,fileinfos):
 	import sqlite3
@@ -108,12 +108,12 @@ def saveinfotodb(dbconnect,fileinfos):
 					INSERT OR IGNORE INTO exif 
 					(exifName)
 					VALUES (?)
-					''',[k])
+					''',[str(k)])
 					c.execute('''
 					INSERT OR IGNORE INTO files_exif 
 					(fileID,exifID,value)
 					VALUES (?,(select exifID from exif where exifname=?),?)
-					''',[fid,k,v])
+					''',[fid,str(k),str(v)])
 			else:
 				dbconnect.rollback()
 				return False
