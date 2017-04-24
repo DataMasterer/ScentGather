@@ -32,12 +32,20 @@ sysid=datamaster_connecttodb.getsysid(dbconnect)
 
 fileinfos=[]
 for f in files:
+	datamaster_logging.log('Testing file:'+f['pathname'])
+	if datamaster_connecttodb.checkfileexistsindb(dbconnect,f):
+		datamaster_logging.log('Skipping file ['+f['pathname']+'], file exists in db')
+		continue
 	fileinfos.append(datamaster_getfilemeta.getallfinfo(f,sysid))
 	if len(fileinfos)>=l and l!=0 and dbconnect is not None:
-		success=datamaster_connecttodb.saveinfotodb(dbconnect,fileinfos)
-		if success is True:
-			fileinfos=[]
-		else:
-			datamaster_logging.log('Failed to saveinfotodb',success,fileinfos,f,files,pathname,d)
-			fileinfos=[]
+		try:
+			success=datamaster_connecttodb.saveinfotodb(dbconnect,fileinfos)
+			if success is True:
+				fileinfos=[]
+			else:
+				datamaster_logging.log('Failed to saveinfotodb',success,fileinfos,f,files,pathname,d)
+				fileinfos=[]
+		except:
+				datamaster_logging.log('Failed to saveinfotodb',Error,fileinfos,f,files,pathname,d)
+				fileinfos=[]
 	datamaster_logging.log('Info',True,fileinfos,f,files,pathname,d)

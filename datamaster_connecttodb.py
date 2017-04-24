@@ -93,6 +93,8 @@ def saveinfotodb(dbconnect,fileinfos):
 	if type(dbconnect) is sqlite3.Connection:
 		c=dbconnect.cursor()
 		for f in fileinfos:
+			f[0]=buffer(f[0])
+			f[1]=buffer(f[1])
 			c.execute('''
 			INSERT OR IGNORE INTO files
 			(filename,pathname,inode,systemID,
@@ -121,3 +123,20 @@ def saveinfotodb(dbconnect,fileinfos):
 		return True
 	else:
 		return False
+
+def checkfileexistsindb(dbconnect,fileinfo):
+	import sqlite3
+	if type(dbconnect) is sqlite3.Connection:
+		c=dbconnect.cursor()
+		pathname=fileinfo['pathname']
+		checksum=datamaster_getfilemeta.hashfile(pathname)
+		res=c.execute('''
+			SELECT 1 FROM files
+			WHERE pathname=? and md5sum=?''', [buffer(pathname),checksum])
+		fileexists=res.fetchall()
+		if fileexists:
+			return True
+		return False
+	else:
+		return False
+
