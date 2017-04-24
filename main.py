@@ -46,6 +46,6 @@ for f in files:
 				datamaster_logging.log('Failed to saveinfotodb',success,fileinfos,f,files,pathname,d)
 				fileinfos=[]
 		except:
-				datamaster_logging.log('Failed to saveinfotodb',Error,fileinfos,f,files,pathname,d)
+				datamaster_logging.log('Failed to saveinfotodb',None,fileinfos,f,files,pathname,d)
 				fileinfos=[]
 	datamaster_logging.log('Info',True,fileinfos,f,files,pathname,d)
