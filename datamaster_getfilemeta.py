@@ -65,8 +65,19 @@ def getallfinfo(targetfile,sysid):
 	fileext=''.join(os.path.splitext(pathname)[1:])
 	filehash=hashfile(pathname)
 	datamaster_logging.log('getallfinfo started')
+
 	gf=GenericFile.create(pathname)
-	analysis=gf.analyze()
+	analysis={}
+	prefix='analyze_'
+	suffix=''
+	methods = sorted(dir(gf))
+	for method in methods:
+		if method.startswith(prefix) and method.endswith(suffix):
+			try:
+				analysis.update(getattr(gf, method)())
+			except:
+				pass
+
 	fstat=os.stat(pathname)
 	ts=time.time()
 	insts=datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
