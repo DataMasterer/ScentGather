@@ -1,5 +1,5 @@
-# DataMaster
-A system for mastering data and file preprocessing
+# ScentGather
+Previously, DataMaster, A system for mastering data and file preprocessing
 
 The first part will be a python script to traverse directories and collect file(s) metadata into a db (currently sqlite)
 
@@ -13,7 +13,9 @@ The first part will be a python script to traverse directories and collect file(
 
 ## Features:
 - Traverse Directories and gather files to a certain depth
-- 
+- Gather file(s) metadata
+- Log progress
+- Save metadata to db
 
 ## Dependencies:
 - Native Libraries: os, sys, time, datetime, sqlite3, hashlib, platform, argparse, shutil
