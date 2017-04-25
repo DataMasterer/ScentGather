@@ -4,7 +4,7 @@ import os
 import platform
 import datetime
 import time
-import datamaster_logging
+import scentgather_logging
 from file_metadata.generic_file import GenericFile
 
 def getsysinfo():
@@ -29,7 +29,7 @@ def findDup(parentFolder):
     # Dups in format {hash:[names]}
     dups = {}
     for dirName, subdirs, fileList in os.walk(parentFolder):
-        datamaster_logging.log('Scanning %s...' % dirName)
+        scentgather_logging.log('Scanning %s...' % dirName)
         for filename in fileList:
             # Get the path to the file
             path = os.path.join(dirName, filename)
@@ -43,7 +43,7 @@ def findDup(parentFolder):
     return dups
 
 def traversedir(parentFolder,depth):
-	datamaster_logging.log('traversedir started')
+	scentgather_logging.log('traversedir started')
 	filelist=[]
 	# traverse root directory, and list directories as dirs and files as files
 	for root, dirs, files in os.walk(parentFolder):
@@ -51,7 +51,7 @@ def traversedir(parentFolder,depth):
 		# Get the path to the file
 		pathlen=len(path) - 1
 		print(pathlen * '---', os.path.basename(root))
-		datamaster_logging.log(pathlen * '---', os.path.basename(root))
+		scentgather_logging.log(pathlen * '---', os.path.basename(root))
 		if len(path)-1==depth and depth!=0: dirs[:]=[];
 		else: 
 			for file in files:
@@ -64,7 +64,7 @@ def getallfinfo(targetfile,sysid):
 	filename=targetfile['filename']
 	fileext=''.join(os.path.splitext(pathname)[1:])
 	filehash=hashfile(pathname)
-	datamaster_logging.log('getallfinfo started')
+	scentgather_logging.log('getallfinfo started')
 
 	gf=GenericFile.create(pathname)
 	analysis={}
@@ -84,6 +84,6 @@ def getallfinfo(targetfile,sysid):
 	fileinfo=[filename,pathname,fstat.st_ino,sysid,
 	fstat.st_mtime,fstat.st_atime,fstat.st_ctime,None,insts,
 	fstat.st_size,None,fileext,filehash,analysis]
-	datamaster_logging.log(pathname,dump=fileinfo)
-	datamaster_logging.log('getallfinfo done')
+	scentgather_logging.log(pathname,dump=fileinfo)
+	scentgather_logging.log('getallfinfo done')
 	return fileinfo

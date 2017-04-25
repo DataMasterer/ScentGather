@@ -1,8 +1,8 @@
-import datamaster_getfilemeta
-import datamaster_logging
+import scentgather_getfilemeta
+import scentgather_logging
 import sys
 
-def connectodb(hostname='localhost',schema='datamaster',username='root',password='',dbtype='sqlite'):
+def connectodb(hostname='localhost',schema='scentgather',username='root',password='',dbtype='sqlite'):
 	if dbtype=='sqlite':
 		import sqlite3
 		conn=sqlite3.connect(schema+'.db')
@@ -86,7 +86,7 @@ def savesysinfotodb(dbconnect,sysinfo):
 	return sysid
 
 def getsysid(dbconnect):
-	return savesysinfotodb(dbconnect,datamaster_getfilemeta.getsysinfo())
+	return savesysinfotodb(dbconnect,scentgather_getfilemeta.getsysinfo())
 
 def saveinfotodb(dbconnect,fileinfos):
 	import sqlite3
@@ -129,7 +129,7 @@ def checkfileexistsindb(dbconnect,fileinfo):
 	if type(dbconnect) is sqlite3.Connection:
 		c=dbconnect.cursor()
 		pathname=fileinfo['pathname']
-		checksum=datamaster_getfilemeta.hashfile(pathname)
+		checksum=scentgather_getfilemeta.hashfile(pathname)
 		res=c.execute('''
 			SELECT 1 FROM files
 			WHERE pathname=? and md5sum=?''', [buffer(pathname),checksum])
