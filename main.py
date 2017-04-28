@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import argparse
+import sys
 import scentgather_connecttodb
 import scentgather_getfilemeta
 import scentgather_logging
@@ -46,6 +47,6 @@ for f in files:
 				scentgather_logging.log('Failed to saveinfotodb',success,fileinfos,f,files,pathname,d)
 				fileinfos=[]
 		except:
-				scentgather_logging.log('Failed to saveinfotodb',None,fileinfos,f,files,pathname,d)
+				scentgather_logging.log('Failed to saveinfotodb', sys.exc_info()[0],fileinfos,f,files,pathname,d)
 				fileinfos=[]
 	scentgather_logging.log('Info',True,fileinfos,f,files,pathname,d)
