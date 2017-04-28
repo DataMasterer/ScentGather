@@ -101,7 +101,7 @@ def saveinfotodb(dbconnect,fileinfos):
 			lastmodDate,lastaccessDate,apparentcreationDate,
 			discovereddeletionDate,insertiondate,sizeInBytes,
 			detectedformatID,ext,md5sum)
-			VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
+			VALUES (CAST(? AS TEXT),CAST(? AS TEXT),?,?,?,?,?,?,?,?,?,?,?)
 			''',f[:-1])
 			if type(c.lastrowid) is int:
 				fid=c.lastrowid
@@ -110,12 +110,12 @@ def saveinfotodb(dbconnect,fileinfos):
 					INSERT OR IGNORE INTO exif 
 					(exifName)
 					VALUES (?)
-					''',[str(k)])
+					''',[unicode(k)])
 					c.execute('''
 					INSERT OR IGNORE INTO files_exif 
 					(fileID,exifID,value)
-					VALUES (?,(select exifID from exif where exifname=?),?)
-					''',[fid,str(k),str(v)])
+					VALUES (?,(select exifID from exif where exifname=?),CAST(? AS TEXT))
+					''',[fid,unicode(k),unicode(v)])
 			else:
 				dbconnect.rollback()
 				return False
