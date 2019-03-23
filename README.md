@@ -44,6 +44,3 @@ optional arguments:
   -t {mysql,sqlite,json,xml,oracle,sqlserver,mariadb}
                         db type [sqlite]
 ```
-
-## Dependencies:
-  file-metadata python library: to install: pip install file-metadata
