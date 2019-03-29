@@ -8,11 +8,11 @@ import scentgather_logging
 from file_metadata.generic_file import GenericFile
 
 def getsysinfo():
-	sysinfo=[str(platform.architecture()),platform.machine(),
-	platform.node(),platform.platform(),platform.processor(),
-	platform.system()]
-	return sysinfo
-	
+    sysinfo=[str(platform.architecture()),platform.machine(),
+    platform.node(),platform.platform(),platform.processor(),
+    platform.system()]
+    return sysinfo
+    
 def hashfile(path, blocksize = 65536):
 #src: http://pythoncentral.io/finding-duplicate-files-with-python/
     afile = open(path, 'rb')
@@ -43,47 +43,47 @@ def findDup(parentFolder):
     return dups
 
 def traversedir(parentFolder,depth):
-	scentgather_logging.log('traversedir started')
-	filelist=[]
-	# traverse root directory, and list directories as dirs and files as files
-	for root, dirs, files in os.walk(parentFolder):
-		path = root.split(os.sep)
-		# Get the path to the file
-		pathlen=len(path) - 1
-		print(pathlen * '---', os.path.basename(root))
-		scentgather_logging.log(pathlen * '---', os.path.basename(root))
-		if len(path)-1==depth and depth!=0: dirs[:]=[];
-		else: 
-			for file in files:
-				pathname = os.path.join(root, file)
-				filelist.append({'pathname':pathname,'filename':file})
-	return filelist
+    scentgather_logging.log('traversedir started')
+    filelist=[]
+    # traverse root directory, and list directories as dirs and files as files
+    for root, dirs, files in os.walk(parentFolder):
+        path = root.split(os.sep)
+        # Get the path to the file
+        pathlen=len(path) - 1
+        print(pathlen * '---', os.path.basename(root))
+        scentgather_logging.log(pathlen * '---', os.path.basename(root))
+        if len(path)-1==depth and depth!=0: dirs[:]=[];
+        else: 
+            for file in files:
+                pathname = os.path.join(root, file)
+                filelist.append({'pathname':pathname,'filename':file})
+    return filelist
 
 def getallfinfo(targetfile,sysid):
-	pathname=targetfile['pathname']
-	filename=targetfile['filename']
-	fileext=''.join(os.path.splitext(pathname)[1:])
-	filehash=hashfile(pathname)
-	scentgather_logging.log('getallfinfo started')
+    pathname=targetfile['pathname']
+    filename=targetfile['filename']
+    fileext=''.join(os.path.splitext(pathname)[1:])
+    filehash=hashfile(pathname)
+    scentgather_logging.log('getallfinfo started')
 
-	gf=GenericFile.create(pathname)
-	analysis={}
-	prefix='analyze_'
-	suffix=''
-	methods = sorted(dir(gf))
-	for method in methods:
-		if method.startswith(prefix) and method.endswith(suffix):
-			try:
-				analysis.update(getattr(gf, method)())
-			except:
-				pass
+    gf=GenericFile.create(pathname)
+    analysis={}
+    prefix='analyze_'
+    suffix=''
+    methods = sorted(dir(gf))
+    for method in methods:
+        if method.startswith(prefix) and method.endswith(suffix):
+            try:
+                analysis.update(getattr(gf, method)())
+            except:
+                pass
 
-	fstat=os.stat(pathname)
-	ts=time.time()
-	insts=datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-	fileinfo=[filename,pathname,fstat.st_ino,sysid,
-	fstat.st_mtime,fstat.st_atime,fstat.st_ctime,None,insts,
-	fstat.st_size,None,fileext,filehash,analysis]
-	scentgather_logging.log(pathname,dump=fileinfo)
-	scentgather_logging.log('getallfinfo done')
-	return fileinfo
+    fstat=os.stat(pathname)
+    ts=time.time()
+    insts=datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+    fileinfo=[filename,pathname,fstat.st_ino,sysid,
+    fstat.st_mtime,fstat.st_atime,fstat.st_ctime,None,insts,
+    fstat.st_size,None,fileext,filehash,analysis]
+    scentgather_logging.log(pathname,dump=fileinfo)
+    scentgather_logging.log('getallfinfo done')
+    return fileinfo
