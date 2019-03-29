@@ -24,6 +24,7 @@ def archivelog():
 	global logfilename
 	ts=time.time()
 	if os.path.exists(logfilename):
-		shutil.copy(logfilename,logfilename+'.'+datetime.datetime.fromtimestamp(ts).strftime('%Y%m%d%H%M%S'))
+                os.rename(logfilename,logfilename+'.'+datetime.datetime.fromtimestamp(ts).strftime('%Y%m%d%H%M%S'))
+		#shutil.copy(logfilename,logfilename+'.'+datetime.datetime.fromtimestamp(ts).strftime('%Y%m%d%H%M%S'))
 	with open(logfilename,'w') as f:
 		f.write('')
