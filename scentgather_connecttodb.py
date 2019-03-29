@@ -124,19 +124,24 @@ def saveinfotodb(dbconnect,fileinfos):
 	else:
 		return False
 
-def checkfileexistsindb(dbconnect,fileinfo):
+def checkfileexistsindb(dbconnect,fileinfo,quick):
 	import sqlite3
 	if type(dbconnect) is sqlite3.Connection:
 		c=dbconnect.cursor()
 		pathname=fileinfo['pathname']
 		checksum=scentgather_getfilemeta.hashfile(pathname)
-		res=c.execute('''
-			SELECT 1 FROM files
-			WHERE pathname=? and md5sum=?''', [buffer(pathname),checksum])
+                if quick:
+                    res=c.execute('''
+                            SELECT 1 FROM files
+                            WHERE pathname=CAST(? AS TEXT)''', [buffer(pathname)])
+                else:
+                    res=c.execute('''
+                            SELECT 1 FROM files
+                            WHERE pathname=CAST(? AS TEXT) and md5sum=?''', [buffer(pathname),checksum])
 		fileexists=res.fetchall()
 		if fileexists:
 			return True
 		return False
 	else:
-		return False
+		return None
 
