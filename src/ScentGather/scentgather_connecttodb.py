@@ -93,8 +93,8 @@ def saveinfotodb(dbconnect,fileinfos):
     if type(dbconnect) is sqlite3.Connection:
         c=dbconnect.cursor()
         for f in fileinfos:
-            f[0]=buffer(f[0])
-            f[1]=buffer(f[1])
+            f[0]=str(f[0])
+            f[1]=str(f[1])
             c.execute('''
             INSERT OR IGNORE INTO files
             (filename,pathname,inode,systemID,
@@ -132,12 +132,12 @@ def checkfileexistsindb(dbconnect,fileinfo,quick):
         if quick:
             res=c.execute('''
                     SELECT 1 FROM files
-                    WHERE pathname=CAST(? AS TEXT)''', [buffer(pathname)])
+                    WHERE pathname=CAST(? AS TEXT)''', [str(pathname)])
         else:
             checksum=scentgather_getfilemeta.hashfile(pathname)
             res=c.execute('''
                     SELECT 1 FROM files
-                    WHERE pathname=CAST(? AS TEXT) and md5sum=?''', [buffer(pathname),checksum])
+                    WHERE pathname=CAST(? AS TEXT) and md5sum=?''', [str(pathname),checksum])
         fileexists=res.fetchall()
         if fileexists:
             return True
