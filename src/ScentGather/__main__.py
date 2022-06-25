@@ -1,10 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import argparse
 import sys
 import os
-import scentgather_connecttodb
-import scentgather_getfilemeta
-import scentgather_logging
+from . import scentgather_connecttodb
+from . import scentgather_getfilemeta
+from . import scentgather_logging
 import datetime
 
 parser = argparse.ArgumentParser(description='Collect File(s) Metadata')
@@ -36,9 +36,9 @@ continuewithoutdb=True
 dbconnect=scentgather_connecttodb.connectodb(H,s,u,p,t)
 if dbconnect is None:
     scentgather_logging.log('Failed to connect, logging only, Sure you want to continue [Y/n]:')
-    contresponse=input('')
+    contresponse=eval(input(''))
     while contresponse!='Y' or contresponse!='y' or contresponse!='N' or contresponse!='n' or contresponse!='':
-        contresponse=input('Failed to connect, logging only, Sure you want to continue [Y/n]:')
+        contresponse=eval(input('Failed to connect, logging only, Sure you want to continue [Y/n]:'))
     if contresponse=='N' or contresponse=='n':
         scentgather_logging.log('Aborting...missing database')
         exit()

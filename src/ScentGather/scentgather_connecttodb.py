@@ -1,5 +1,5 @@
-import scentgather_getfilemeta
-import scentgather_logging
+from . import scentgather_getfilemeta
+from . import scentgather_logging
 import sys
 
 def connectodb(hostname='localhost',schema='scentgather',username='root',password='',dbtype='sqlite'):
@@ -110,12 +110,12 @@ def saveinfotodb(dbconnect,fileinfos):
                     INSERT OR IGNORE INTO exif 
                     (exifName)
                     VALUES (?)
-                    ''',[unicode(k)])
+                    ''',[str(k)])
                     c.execute('''
                     INSERT OR IGNORE INTO files_exif 
                     (fileID,exifID,value)
                     VALUES (?,(select exifID from exif where exifname=?),CAST(? AS TEXT))
-                    ''',[fid,unicode(k),unicode(v)])
+                    ''',[fid,str(k),str(v)])
             else:
                 dbconnect.rollback()
                 return False

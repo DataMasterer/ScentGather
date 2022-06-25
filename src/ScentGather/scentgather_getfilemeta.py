@@ -4,7 +4,7 @@ import os
 import platform
 import datetime
 import time
-import scentgather_logging
+from . import scentgather_logging
 from file_metadata.generic_file import GenericFile
 
 def getsysinfo():
@@ -50,7 +50,7 @@ def traversedir(parentFolder,depth):
         path = root.split(os.sep)
         # Get the path to the file
         pathlen=len(path) - 1
-        print(pathlen * '---', os.path.basename(root))
+        print((pathlen * '---', os.path.basename(root)))
         scentgather_logging.log(pathlen * '---', os.path.basename(root))
         if len(path)-1==depth and depth!=0: dirs[:]=[];
         else: 

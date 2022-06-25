@@ -16,7 +16,7 @@ def log(msg,errmsg=None,dump=None,listelem=None,elemparent=None,pathname=None,de
     else:
         logstring=logstring+[None]
     logstring=logstring+[pathname,depth,dump]
-    print logstring
+    print(logstring)
     with open(logfilename,'a') as f:
         f.write('\t'.join(map(str,logstring))+'\n')
 
