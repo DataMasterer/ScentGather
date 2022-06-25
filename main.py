@@ -1,9 +1,11 @@
 #!/usr/bin/python
 import argparse
 import sys
+import os
 import scentgather_connecttodb
 import scentgather_getfilemeta
 import scentgather_logging
+import datetime
 
 parser = argparse.ArgumentParser(description='Collect File(s) Metadata')
 parser.add_argument('-d',default=0,help='depth [0] (0 for infinite)',type=int)
@@ -44,17 +46,28 @@ if dbconnect is None:
         scentgather_logging.log('Continuing without database')
 
 
-
+cpt = sum([len(files) for root, dirs, files in os.walk(pathname)])
 files=scentgather_getfilemeta.traversedir(pathname,d)
 sysid=scentgather_connecttodb.getsysid(dbconnect)
 
+fileseq=1
 fileinfos=[]
+ETA=None
+sct=scentgather_logging.ScentTimer()
 for f in files:
-    scentgather_logging.log('Testing file:'+f['pathname'])
+    percentdone=round((fileseq-1)/float(cpt)*100,2)
+    remainingfiles=cpt-fileseq+1
+    scentgather_logging.log('Testing file ('+str(fileseq)+'/'+str(cpt)+', '+str(remainingfiles)+' remain) ('+str(percentdone)+'% done):'+f['pathname'])
+    fileseq+=1
     if scentgather_connecttodb.checkfileexistsindb(dbconnect,f,quick):
         scentgather_logging.log('Skipping file ['+f['pathname']+'], file exists in db')
         continue
+    if sct.avgTime is None:
+        scentgather_logging.log('Calculating ETA...')
+    sct.start()
     fileinfos.append(scentgather_getfilemeta.getallfinfo(f,sysid))
+    sct.stop()
+    scentgather_logging.log('ETA: '+sct.ETA(remainingfiles)+', remaining:'+sct.remainingUntil(remainingfiles))
     if len(fileinfos)>=l and l!=0 and dbconnect is not None:
         try:
             success=scentgather_connecttodb.saveinfotodb(dbconnect,fileinfos)
@@ -67,3 +80,4 @@ for f in files:
                 scentgather_logging.log('Failed to saveinfotodb', sys.exc_info()[0],fileinfos,f,files,pathname,d)
                 fileinfos=[]
     scentgather_logging.log('Info',True,fileinfos,f,files,pathname,d)
+finishInterval=sct.grandTotalElapsed()
