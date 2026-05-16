@@ -1,0 +1,14 @@
+wheel
+distro
+python-magic
+six
+appdirs
+pillow
+numpy
+dlib
+scikit-image
+wand
+zbar
+pycolorname
+ffprobe
+file_metadata

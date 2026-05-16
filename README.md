@@ -21,12 +21,17 @@ The first part will be a python script to traverse directories and collect file(
 - Native Libraries: os, sys, time, datetime, sqlite3, hashlib, platform, argparse, shutil
 - External Libraries: [file_metadata](https://pypi.python.org/pypi/file-metadata)
 
+## Installation:
+- `pip install -r requirements.txt`
+- `pip install .`
+
 ## Usage:
 ```
-./main.py -h
-usage: main.py [-h] [-d D] [-l L] [-H H] [-s S] [-u U] [-p P]
-               [-t {mysql,sqlite,json,xml,oracle,sqlserver,mariadb}]
-               pathname
+$ python -m ScentGather -h
+usage: __main__.py [-h] [-d D] [-l L] [-H H] [-s S] [-u U] [-p P]
+                   [-t {mysql,sqlite,json,xml,oracle,sqlserver,mariadb}]
+                   [--verbose] [--quick]
+                   pathname
 
 Collect File(s) Metadata
 
@@ -35,12 +40,16 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  -d D                  depth [0]
-  -l L                  array in memory limit [0]
+  -d D                  depth [0] (0 for infinite)
+  -l L                  array in memory limit [100] (0 for infinite)
   -H H                  db hostname [localhost]
-  -s S                  db schema [datamaster]
+  -s S                  db schema [scentgather]
   -u U                  db username [root]
   -p P                  db password []
   -t {mysql,sqlite,json,xml,oracle,sqlserver,mariadb}
                         db type [sqlite]
+  --verbose             print log messages to stdout
+  --quick               skips files according to their pathname only (not
+                        accurate, use carefully)
+
 ```

@@ -3,3 +3,5 @@
 *.log.*
 *.pyc
 *.db
+*.egg-info/*
+build/*
